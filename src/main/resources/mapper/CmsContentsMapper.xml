@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxiaodao.blog.basis.dao.CmsContentsMapper">
+  <resultMap id="BaseResultMap" type="com.dongxiaodao.blog.basis.bean.CmsContents">
+    <id column="cid" jdbcType="INTEGER" property="cid" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="slug" jdbcType="VARCHAR" property="slug" />
+    <result column="thumb_img" jdbcType="VARCHAR" property="thumbImg" />
+    <result column="created" jdbcType="TIMESTAMP" property="created" />
+    <result column="modified" jdbcType="TIMESTAMP" property="modified" />
+    <result column="author_id" jdbcType="INTEGER" property="authorId" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="fmt_type" jdbcType="VARCHAR" property="fmtType" />
+    <result column="tags" jdbcType="VARCHAR" property="tags" />
+    <result column="categories" jdbcType="VARCHAR" property="categories" />
+    <result column="hits" jdbcType="INTEGER" property="hits" />
+    <result column="comments_num" jdbcType="INTEGER" property="commentsNum" />
+    <result column="allow_comment" jdbcType="INTEGER" property="allowComment" />
+    <result column="allow_ping" jdbcType="INTEGER" property="allowPing" />
+    <result column="allow_feed" jdbcType="INTEGER" property="allowFeed" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.dongxiaodao.blog.basis.bean.CmsContents">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    cid, title, slug, thumb_img, created, modified, author_id, type, status, fmt_type, 
+    tags, categories, hits, comments_num, allow_comment, allow_ping, allow_feed, sort
+  </sql>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.dongxiaodao.blog.basis.bean.CmsContentsExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_contents
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.dongxiaodao.blog.basis.bean.CmsContentsExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from cms_contents
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_contents
+    where cid = #{cid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from cms_contents
+    where cid = #{cid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.dongxiaodao.blog.basis.bean.CmsContentsExample">
+    delete from cms_contents
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.dongxiaodao.blog.basis.bean.CmsContents"
+          useGeneratedKeys="true" keyProperty="cid">
+    insert into cms_contents (cid, title, slug, 
+      thumb_img, created, modified, 
+      author_id, type, status, 
+      fmt_type, tags, categories, 
+      hits, comments_num, allow_comment, 
+      allow_ping, allow_feed, sort, 
+      content)
+    values (#{cid,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{slug,jdbcType=VARCHAR}, 
+      #{thumbImg,jdbcType=VARCHAR}, #{created,jdbcType=TIMESTAMP}, #{modified,jdbcType=TIMESTAMP}, 
+      #{authorId,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{fmtType,jdbcType=VARCHAR}, #{tags,jdbcType=VARCHAR}, #{categories,jdbcType=VARCHAR}, 
+      #{hits,jdbcType=INTEGER}, #{commentsNum,jdbcType=INTEGER}, #{allowComment,jdbcType=INTEGER}, 
+      #{allowPing,jdbcType=INTEGER}, #{allowFeed,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}, 
+      #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.dongxiaodao.blog.basis.bean.CmsContents">
+    insert into cms_contents
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cid != null">
+        cid,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="slug != null">
+        slug,
+      </if>
+      <if test="thumbImg != null">
+        thumb_img,
+      </if>
+      <if test="created != null">
+        created,
+      </if>
+      <if test="modified != null">
+        modified,
+      </if>
+      <if test="authorId != null">
+        author_id,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="fmtType != null">
+        fmt_type,
+      </if>
+      <if test="tags != null">
+        tags,
+      </if>
+      <if test="categories != null">
+        categories,
+      </if>
+      <if test="hits != null">
+        hits,
+      </if>
+      <if test="commentsNum != null">
+        comments_num,
+      </if>
+      <if test="allowComment != null">
+        allow_comment,
+      </if>
+      <if test="allowPing != null">
+        allow_ping,
+      </if>
+      <if test="allowFeed != null">
+        allow_feed,
+      </if>
+      <if test="sort != null">
+        sort,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cid != null">
+        #{cid,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="slug != null">
+        #{slug,jdbcType=VARCHAR},
+      </if>
+      <if test="thumbImg != null">
+        #{thumbImg,jdbcType=VARCHAR},
+      </if>
+      <if test="created != null">
+        #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modified != null">
+        #{modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="authorId != null">
+        #{authorId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="fmtType != null">
+        #{fmtType,jdbcType=VARCHAR},
+      </if>
+      <if test="tags != null">
+        #{tags,jdbcType=VARCHAR},
+      </if>
+      <if test="categories != null">
+        #{categories,jdbcType=VARCHAR},
+      </if>
+      <if test="hits != null">
+        #{hits,jdbcType=INTEGER},
+      </if>
+      <if test="commentsNum != null">
+        #{commentsNum,jdbcType=INTEGER},
+      </if>
+      <if test="allowComment != null">
+        #{allowComment,jdbcType=INTEGER},
+      </if>
+      <if test="allowPing != null">
+        #{allowPing,jdbcType=INTEGER},
+      </if>
+      <if test="allowFeed != null">
+        #{allowFeed,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null">
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.dongxiaodao.blog.basis.bean.CmsContentsExample" resultType="java.lang.Long">
+    select count(*) from cms_contents
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update cms_contents
+    <set>
+      <if test="record.cid != null">
+        cid = #{record.cid,jdbcType=INTEGER},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.slug != null">
+        slug = #{record.slug,jdbcType=VARCHAR},
+      </if>
+      <if test="record.thumbImg != null">
+        thumb_img = #{record.thumbImg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.created != null">
+        created = #{record.created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.modified != null">
+        modified = #{record.modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.authorId != null">
+        author_id = #{record.authorId,jdbcType=INTEGER},
+      </if>
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fmtType != null">
+        fmt_type = #{record.fmtType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tags != null">
+        tags = #{record.tags,jdbcType=VARCHAR},
+      </if>
+      <if test="record.categories != null">
+        categories = #{record.categories,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hits != null">
+        hits = #{record.hits,jdbcType=INTEGER},
+      </if>
+      <if test="record.commentsNum != null">
+        comments_num = #{record.commentsNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.allowComment != null">
+        allow_comment = #{record.allowComment,jdbcType=INTEGER},
+      </if>
+      <if test="record.allowPing != null">
+        allow_ping = #{record.allowPing,jdbcType=INTEGER},
+      </if>
+      <if test="record.allowFeed != null">
+        allow_feed = #{record.allowFeed,jdbcType=INTEGER},
+      </if>
+      <if test="record.sort != null">
+        sort = #{record.sort,jdbcType=INTEGER},
+      </if>
+      <if test="record.content != null">
+        content = #{record.content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update cms_contents
+    set cid = #{record.cid,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      slug = #{record.slug,jdbcType=VARCHAR},
+      thumb_img = #{record.thumbImg,jdbcType=VARCHAR},
+      created = #{record.created,jdbcType=TIMESTAMP},
+      modified = #{record.modified,jdbcType=TIMESTAMP},
+      author_id = #{record.authorId,jdbcType=INTEGER},
+      type = #{record.type,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=VARCHAR},
+      fmt_type = #{record.fmtType,jdbcType=VARCHAR},
+      tags = #{record.tags,jdbcType=VARCHAR},
+      categories = #{record.categories,jdbcType=VARCHAR},
+      hits = #{record.hits,jdbcType=INTEGER},
+      comments_num = #{record.commentsNum,jdbcType=INTEGER},
+      allow_comment = #{record.allowComment,jdbcType=INTEGER},
+      allow_ping = #{record.allowPing,jdbcType=INTEGER},
+      allow_feed = #{record.allowFeed,jdbcType=INTEGER},
+      sort = #{record.sort,jdbcType=INTEGER},
+      content = #{record.content,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update cms_contents
+    set cid = #{record.cid,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      slug = #{record.slug,jdbcType=VARCHAR},
+      thumb_img = #{record.thumbImg,jdbcType=VARCHAR},
+      created = #{record.created,jdbcType=TIMESTAMP},
+      modified = #{record.modified,jdbcType=TIMESTAMP},
+      author_id = #{record.authorId,jdbcType=INTEGER},
+      type = #{record.type,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=VARCHAR},
+      fmt_type = #{record.fmtType,jdbcType=VARCHAR},
+      tags = #{record.tags,jdbcType=VARCHAR},
+      categories = #{record.categories,jdbcType=VARCHAR},
+      hits = #{record.hits,jdbcType=INTEGER},
+      comments_num = #{record.commentsNum,jdbcType=INTEGER},
+      allow_comment = #{record.allowComment,jdbcType=INTEGER},
+      allow_ping = #{record.allowPing,jdbcType=INTEGER},
+      allow_feed = #{record.allowFeed,jdbcType=INTEGER},
+      sort = #{record.sort,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.dongxiaodao.blog.basis.bean.CmsContents">
+    update cms_contents
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="slug != null">
+        slug = #{slug,jdbcType=VARCHAR},
+      </if>
+      <if test="thumbImg != null">
+        thumb_img = #{thumbImg,jdbcType=VARCHAR},
+      </if>
+      <if test="created != null">
+        created = #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modified != null">
+        modified = #{modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="authorId != null">
+        author_id = #{authorId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="fmtType != null">
+        fmt_type = #{fmtType,jdbcType=VARCHAR},
+      </if>
+      <if test="tags != null">
+        tags = #{tags,jdbcType=VARCHAR},
+      </if>
+      <if test="categories != null">
+        categories = #{categories,jdbcType=VARCHAR},
+      </if>
+      <if test="hits != null">
+        hits = #{hits,jdbcType=INTEGER},
+      </if>
+      <if test="commentsNum != null">
+        comments_num = #{commentsNum,jdbcType=INTEGER},
+      </if>
+      <if test="allowComment != null">
+        allow_comment = #{allowComment,jdbcType=INTEGER},
+      </if>
+      <if test="allowPing != null">
+        allow_ping = #{allowPing,jdbcType=INTEGER},
+      </if>
+      <if test="allowFeed != null">
+        allow_feed = #{allowFeed,jdbcType=INTEGER},
+      </if>
+      <if test="sort != null">
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where cid = #{cid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.dongxiaodao.blog.basis.bean.CmsContents">
+    update cms_contents
+    set title = #{title,jdbcType=VARCHAR},
+      slug = #{slug,jdbcType=VARCHAR},
+      thumb_img = #{thumbImg,jdbcType=VARCHAR},
+      created = #{created,jdbcType=TIMESTAMP},
+      modified = #{modified,jdbcType=TIMESTAMP},
+      author_id = #{authorId,jdbcType=INTEGER},
+      type = #{type,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      fmt_type = #{fmtType,jdbcType=VARCHAR},
+      tags = #{tags,jdbcType=VARCHAR},
+      categories = #{categories,jdbcType=VARCHAR},
+      hits = #{hits,jdbcType=INTEGER},
+      comments_num = #{commentsNum,jdbcType=INTEGER},
+      allow_comment = #{allowComment,jdbcType=INTEGER},
+      allow_ping = #{allowPing,jdbcType=INTEGER},
+      allow_feed = #{allowFeed,jdbcType=INTEGER},
+      sort = #{sort,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where cid = #{cid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.dongxiaodao.blog.basis.bean.CmsContents">
+    update cms_contents
+    set title = #{title,jdbcType=VARCHAR},
+      slug = #{slug,jdbcType=VARCHAR},
+      thumb_img = #{thumbImg,jdbcType=VARCHAR},
+      created = #{created,jdbcType=TIMESTAMP},
+      modified = #{modified,jdbcType=TIMESTAMP},
+      author_id = #{authorId,jdbcType=INTEGER},
+      type = #{type,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      fmt_type = #{fmtType,jdbcType=VARCHAR},
+      tags = #{tags,jdbcType=VARCHAR},
+      categories = #{categories,jdbcType=VARCHAR},
+      hits = #{hits,jdbcType=INTEGER},
+      comments_num = #{commentsNum,jdbcType=INTEGER},
+      allow_comment = #{allowComment,jdbcType=INTEGER},
+      allow_ping = #{allowPing,jdbcType=INTEGER},
+      allow_feed = #{allowFeed,jdbcType=INTEGER},
+      sort = #{sort,jdbcType=INTEGER}
+    where cid = #{cid,jdbcType=INTEGER}
+  </update>
+</mapper>

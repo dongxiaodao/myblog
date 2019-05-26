@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dongxiaodao.blog.basis.dao.VisitorMapper">
+    <sql id="Base_Article_Column_List">
+        a.cid, a.title, a.slug, a.thumb_img, a.created, a.modified, a.author_id, a.type, a.status, a.fmt_type,
+        a.tags, a.categories, a.hits, a.comments_num, a.allow_comment, a.allow_ping, a.allow_feed,a.sort
+    </sql>
+    <resultMap id="ContentsResultMap" type="com.dongxiaodao.blog.basis.bean.CmsContents">
+        <id column="cid" property="cid" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="slug" property="slug" jdbcType="VARCHAR"/>
+        <result column="thumb_img" property="thumbImg" jdbcType="VARCHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="modified" property="modified" jdbcType="TIMESTAMP"/>
+        <result column="author_id" property="authorId" jdbcType="INTEGER"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="fmt_type" property="fmtType" jdbcType="VARCHAR"/>
+        <result column="tags" property="tags" jdbcType="VARCHAR"/>
+        <result column="categories" property="categories" jdbcType="VARCHAR"/>
+        <result column="hits" property="hits" jdbcType="INTEGER"/>
+        <result column="comments_num" property="commentsNum" jdbcType="INTEGER"/>
+        <result column="allow_comment" property="allowComment" jdbcType="INTEGER"/>
+        <result column="allow_ping" property="allowPing" jdbcType="INTEGER"/>
+        <result column="allow_feed" property="allowFeed" jdbcType="INTEGER"/>
+        <result column="sort" property="sort" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="MetaDtoRusultMap" type="com.dongxiaodao.blog.basis.dto.MetaDto">
+    </resultMap>
+    <resultMap id="ArchivesResultMap" type="com.dongxiaodao.blog.basis.dto.Archive">
+        <result column="date_str" property="dateTimeStr" jdbcType="VARCHAR"/>
+        <result column="count" property="count" jdbcType="INTEGER"/>
+    </resultMap>
+    <resultMap id="ContentsResultMapWithBLOBS" type="com.dongxiaodao.blog.basis.bean.CmsContents"
+               extends="ContentsResultMap">
+        <result column="content" property="content" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <!--新增的根据slug或者cid找到文章-->
+    <select id="selectArticleByKeyOrSlug" resultMap="ContentsResultMapWithBLOBS" parameterType="java.lang.String">
+        SELECT *
+        FROM cms_contents
+        WHERE 1=1
+        and slug = #{KEY , jdbcType=VARCHAR} OR cid=#{KEY ,jdbcType=INTEGER}
+        ORDER BY created DESC
+    </select>
+    <select id="selectMetaByTypeAndName" resultMap="MetaDtoRusultMap" parameterType="java.lang.String">
+      <!-- 多加count(*)使得即便有多个结果，也只返回一个条记录，-->
+        SELECT *, count(*) as count
+        FROM cms_metas
+        WHERE type=#{type1}
+        AND name=#{name1}
+        ORDER  BY sort DESC
+    </select>
+    <select id="getPublishArticles" resultMap="ContentsResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Article_Column_List"/>
+        FROM cms_contents a
+        LEFT JOIN cms_relationships b
+        ON a.cid = b.cid
+        WHERE b.mid = #{mid, jdbcType=INTEGER}
+        AND a.status='publish'
+        AND a.allow_feed=0
+        ORDER BY a.created DESC
+    </select>
+    <select id="selectMetaByTypeJoinArticle" resultMap="MetaDtoRusultMap">
+        SELECT a.*, count(b.cid) as count
+        FROM cms_metas a
+        LEFT JOIN cms_relationships b
+        ON a.mid=b.mid
+        LEFT JOIN cms_contents c
+        ON c.cid=b.cid
+        WHERE a.type=#{0}
+        AND c.`status`='publish'
+        AND c.allow_feed=0
+        GROUP BY a.mid
+        ORDER  BY count DESC,a.mid DESC
+    </select>
+    <select id="getArchives" resultMap="ArchivesResultMap">
+        SELECT DATE_FORMAT(created,'%Y年%m月') date_str,count(*) as count
+        FROM cms_contents
+        WHERE status = 'publish'
+        GROUP BY date_str
+        ORDER BY created DESC
+    </select>
+    <select id="selectAllMetaByType" resultMap="MetaDtoRusultMap">
+        SELECT a.*, count(b.cid) as count
+        FROM cms_metas a
+        LEFT JOIN cms_relationships b
+        ON a.mid=b.mid
+        WHERE a.type=#{0}
+        GROUP BY a.mid
+        ORDER  BY count DESC,a.mid DESC
+    </select>
+
+</mapper>

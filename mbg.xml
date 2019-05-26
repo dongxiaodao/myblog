@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        <!--生成没有注释的结果-->
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <property name="suppressAllComments" value="true" />
+        </commentGenerator>
+        <!--配置数据库连接-->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/myblog"
+                        userId="root"
+                        password="password">
+        </jdbcConnection>
+
+        <javaTypeResolver >
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+        <!--指定javaBean生成的位置-->
+        <javaModelGenerator
+                targetPackage="com.dongxiaodao.blog.basis.bean"
+                targetProject=".\src\main\java">
+            <property name="enableSubPackages" value="true" />
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <!--sql映射文件生成的位置-->
+        <sqlMapGenerator
+                targetPackage="mapper"
+                targetProject=".\src\main\resources">
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+
+        <!--DAO接口的生成的位置-->
+        <javaClientGenerator type="XMLMAPPER"
+                             targetPackage="com.dongxiaodao.blog.basis.dao"
+                             targetProject=".\src\main\java">
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+
+        <!--table指定每个表的生成策略 copy from source-->
+
+
+        <!--用户详细信息:用户编号，账号，密码，邮箱,创建时间等-->
+        <table tableName="sys_users" ></table>
+
+        <!--博客任何操作的日志：日志编号，具体操作内容（action），具体操作对象（data）
+        操作人（author_id），操作人ip，日志生成时间-->
+        <table tableName="sys_logs" ></table>
+
+        <!--cms:内容管理系统-->
+
+        <!--评论信息：评论编号，评论文章编号，评论创建时间，评论人，评论文章作者，
+        评论内容，评论人ip，评论是否可见状态-->
+        <table tableName="cms_comments" ></table>
+
+        <!--文章里上传的图片 ：图片编号，图片文件名，经过hash后的文件名(fkey)-->
+        <table tableName="cms_attach" ></table>
+
+        <!--文章：文章编号，文章标题，缩略名（分类，标签），封面图片，创建时间，
+        修改时间，内容，作者id，文章类型，是否已发表状态，标签，
+        分类，点击量，评论数量，显示评论数量，是否允许评论，
+        是否允许随笔，是否存为草稿，排序级别
+        -->
+        <table tableName="cms_contents" ></table>
+
+        <!--文章的一些属性：属性编号，属性名字，缩略名，属于标签还是分类，排序级别-->
+        <table tableName="cms_metas" ></table>
+
+        <!--分类：分类名，分类名的值（中文名字）描述（description）-->
+        <table tableName="cms_options" ></table>
+
+        <!--文章和文章属性关联表：文章编号，文章属性编号-->
+        <table tableName="cms_relationships" ></table>
+
+
+
+    </context>
+</generatorConfiguration>

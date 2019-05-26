@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/jdbc
+    http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+    http://www.springframework.org/schema/cache
+    http://www.springframework.org/schema/cache/spring-cache.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- Spring 配置文件，这里主要配置和业务逻辑有关的 -->
+    <!--数据源，事务控制，xxx-->
+
+    <!--引入配置文件-->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath*:dbconfig.properties</value>
+            </list>
+        </property>
+    </bean>
+    <!--数据源配置-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="driverClass" value="${jdbc.driver}"/>
+        <property name="user" value="${jdbc.user}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <!--连接池保留的最小连接数-->
+        <property name="minPoolSize" value="10"/>
+        <!--连接池中保留的最大连接数-->
+        <property name="maxPoolSize" value="100"/>
+        <!--最大空闲时间，1800秒内未使用则连接被丢弃，若为0则用不丢弃，默认为0，若不不设置，超过8小时访问网站会出现连接异常-->
+        <property name="maxIdleTime" value="1800"/>
+        <!---当连接池中的连接耗尽的时候c3p0一次同时获取的连接数-->
+        <property name="acquireIncrement" value="3"/>
+        <property name="maxStatements" value="1000"/>
+        <property name="initialPoolSize" value="10"/>
+        <!--每60秒检查所有连接池中的空闲连接。Default: 0-->
+        <property name="idleConnectionTestPeriod" value="60"/>
+        <!--定义在从数据库获取新连接失败后重复尝试的次数。Default: 30-->
+        <property name="acquireRetryAttempts" value="30"/>
+        <property name="breakAfterAcquireFailure" value="true"/>
+        <property name="testConnectionOnCheckin" value="false"/>
+    </bean>
+
+    <!--扫描组件-->
+    <context:component-scan base-package="com.dongxiaodao.blog">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!--和mybatis的整合=======================================-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--指定mybatis全局配置文件的位置-->
+        <property name="configLocation" value="classpath:mybatis-config.xml"></property>
+        <property name="dataSource" ref="dataSource"></property>
+        <!--指定mybatis，mapper文件的位置-->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"></property>
+    </bean>
+    <!--配置扫描器，将mybatis接口的实现加入到ioc容器中-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.dongxiaodao.blog.basis.dao"></property>
+    </bean>
+    <!--和mybatis的整合=======================================-->
+
+
+    <!--事务控制的配置=========================================-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+        p:dataSource-ref="dataSource">
+        <!--控制住数据源-->
+    </bean>
+    <!--开启基于注解的事务，使用xml配置形式的事务（比较重要的都是使用配置式）-->
+    <aop:config>
+        <!--切入点表达式-->
+        <aop:pointcut id="txPoint"  expression="execution(* com.dongxiaodao.blog.basis.service..*(..) )"/>
+        <!--配置事务增强-->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPoint"/>
+    </aop:config>
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!--所有的方法都是事务方法-->
+            <tx:method name="*"/>
+            <!--以get开始的方法优化设置为只读-->
+            <tx:method name="get*" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+    <!--事务控制的配置-->
+
+
+    <!-- 配置使Spring采用CGLIB代理 -->
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+
+
+
+    <!---->
+</beans>
